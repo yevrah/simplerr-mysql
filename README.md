@@ -110,7 +110,7 @@ before an after.
 
     wsgi.serve()
 
-# Fini
+# En Conclusión
 
 Thats it, for a basic website that may be all you need to do. Check out the
 pooled connection repo for how to handle sites with more loads, and why the
