@@ -1,5 +1,6 @@
 from simplerr import web
 from models import Person
+import config
 
 @web('/')
 def index(request):
@@ -7,6 +8,7 @@ def index(request):
     <ul>
         <li><a href="/person/all">Show all</a>
         <li><a href="/person/first">Show first</a>
+        <li><a href="/timeout">Test timeout</a>
     </ul>
     """
 

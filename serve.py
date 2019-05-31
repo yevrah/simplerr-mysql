@@ -3,31 +3,20 @@
 import sys
 sys.path.append('./website/')
 
-import config
-
+from config import DATABASE
 from simplerr import dispatcher
 
 def connect(request):
-    config.DATABASE.connect()
-
+    DATABASE.connect()
 
 def close(request, response):
-    config.DATABASE.close()
+    DATABASE.close()
 
-
-def create(site='./website', hostname='127.0.0.1', port=3000, reloader=True, debugger=True, evalex=True, processes=1, cache=False):
-    wsgi = dispatcher.wsgi(site, hostname, port,
-                           use_reloader=reloader,
-                           use_debugger=debugger,
-                           use_evalex=evalex,
-                           threaded=True,
-                           processes=processes)
-
+def create(site='./website', hostname='127.0.0.1', port=3000):
+    wsgi = dispatcher.wsgi(site, hostname, port,)
     wsgi.global_events.on_pre_response(connect)
     wsgi.global_events.on_post_response(close)
-
     return wsgi
-
 
 app = create()
 app.serve()
