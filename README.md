@@ -1,10 +1,11 @@
 # Summary
 
-Connection strategies for MySQL - robust, simple - but no pooling.
+Connection strategies for MySQL - robust, simple - but no pooling. If you need
+pooling can find it in another project which goes into further detail.
 
 # Baby Steps
 
-To run this project you must first create the following user on your system
+To run this project you must first create the following user and schema.
 
     $ mysql -u root -p
 
@@ -67,6 +68,8 @@ information in module vairables for use in testing pooled connections later.
     mysql> kill 30;
     Query OK, 0 rows affected (0.00 sec)
 
-![](docs/broken.png)
+![broken](docs/broken.png)
 
 # lets fix this
+
+    #file:

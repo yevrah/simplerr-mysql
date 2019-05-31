@@ -16,9 +16,9 @@ DATABASE = MySQLDatabase(
     port=DB_PORT
     )
 
-# DATABASE = MystroPooledConnection(
+# DATABASE = SimplerrPooledConnection(
 #     DB_SCHEMA,
-#     max_connections=15,       # TODO: my.cnf need to be configured to allow more then 150 connections
+#     max_connections=150,
 #     timeout=60,
 #     stale_timeout=60, **{
 #         'host': DB_HOST,
