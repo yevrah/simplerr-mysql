@@ -50,7 +50,7 @@ information in module vairables for use in testing pooled connections later.
 
 # Review
 
-!()[docs/person.png]
+![output](docs/person.png)
 
 # Let'ak whats broken...
 
@@ -67,6 +67,6 @@ information in module vairables for use in testing pooled connections later.
     mysql> kill 30;
     Query OK, 0 rows affected (0.00 sec)
 
-!()[docs/broken.png]
+![](docs/broken.png)
 
 # lets fix this
