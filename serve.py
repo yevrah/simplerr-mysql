@@ -3,14 +3,14 @@
 import sys
 sys.path.append('./website/')
 
-from config import DATABASE
+from config import DB
 from simplerr import dispatcher
 
 def connect(request):
-    DATABASE.connect()
+    DB.connect()
 
 def close(request, response):
-    DATABASE.close()
+    DB.close()
 
 def create(site='./website', hostname='127.0.0.1', port=3000):
     wsgi = dispatcher.wsgi(site, hostname, port,)

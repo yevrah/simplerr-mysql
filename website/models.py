@@ -1,16 +1,16 @@
 from peewee import *
-import config
+from config import DB
 
 class Person(Model):
     firstname = CharField()
     surname = CharField()
 
     class Meta:
-        database = config.DATABASE
+        database = DB
 
 if __name__ == "__main__":
-    config.DATABASE.connect()
-    config.DATABASE.create_tables([Person])
+    DB.connect()
+    DB.create_tables([Person])
 
     # Add some data
     Person(firstname="John", surname="Bob").save()

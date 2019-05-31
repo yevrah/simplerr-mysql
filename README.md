@@ -3,61 +3,75 @@
 Connection strategies for MySQL - robust, simple - but no pooling. If you need
 pooling can find it in another project which goes into further detail.
 
-# Baby Steps
+# Initial steps
 
 To run this project you must first create the following user and schema.
 
     $ mysql -u root -p
 
-    -- Create user with password
-    CREATE USER 'simplerr'@'127.0.0.1' IDENTIFIED BY 'pick-password';
+    mysql> -- Create user with password
+    mysql> CREATE USER 'simplerr'@'127.0.0.1' IDENTIFIED BY 'pick-password';
 
-    -- Give them some rights - because were going to be testing the stopping
-    -- of connections we're going with admin level rights here
-    GRANT ALL ON *.* TO 'simplerr'@'127.0.0.1' WITH GRANT OPTION;
+    mysql> -- Give them some rights - because were going to be testing the stopping
+    mysql> -- of connections we're going with admin level rights here
+    mysql> GRANT ALL ON *.* TO 'simplerr'@'127.0.0.1' WITH GRANT OPTION;
 
-    -- Reload grants table without restarting mysql
-    FLUSH PRIVILEGES;
+    mysql> -- Reload grants table without restarting mysql
+    mysql> FLUSH PRIVILEGES;
 
-    -- Create the schema
-    CREATE DATABASE simplerr_schema;
+    mysql> -- Create the schema
+    mysql> CREATE DB simplerr_schema;
 
-# Packages
+# Setup your project
 
 The mysqlclient driver is the preffered database connector for use with
 simplerr, in extensive testing it has proven to run well in multiple systems,
 run consistently and updates are frequent.
 
-    pip install mysqlclient simplerr
+    $ python3 -m venv env
+    $ source env/bin/activate
+    (env)$ pip install mysqlclient simplerr
 
 
-# Now lets create a config file
+# Create a config file
 
 Create a config file to host our database settings. We'll store the connection
 information in module vairables for use in testing pooled connections later.
 
-    # file: config.py
+    # file: website/config.py
     from peewee import MySQLDatabase
 
-    DB_SCHM = 'simplerr_schema'
-    DB_USER = 'simplerr'
-    DB_PASS = 'pick-password'
-    DB_HOST = '127.0.0.1'
-    DB_PORT = 3306
+    DB = MySQLDatabase(
+        'simplerr_schema',
+        user='simplerr',
+        password='pick-password',
+        host='127.0.0.1',
+        port=3306
+    )
 
-    DATABASE = MySQLDatabase(
-        DB_SCHM,
-        user=DB_USER,
-        password=DB_PASS,
-        host=DB_HOST,
-        port=DB_PORT
-        )
+# Create a basic page
 
-# Review
+    # file: website/index.py
+    ...
+    @web('/person/all')
+    def person_api(request):
+        return Person.select()
+
+    @web('/person/first')
+    def person_first(request):
+        return Person.select().get()
+
+# Review the output
+
+If all is successful you should get the following when going to `/person/first`
 
 ![output](docs/person.png)
 
-# Break this
+# How does this break?
+
+However, this can be easily broken - the connection can time out as happens in
+long running sites, a developer may accidently close the connection, and
+others. We can similute these events by stopping the connection from mysql.
 
     mysql> show processlist;
     +----+----------+-----------------+-----------------+---------+--------+----------+------------------+
@@ -73,7 +87,7 @@ information in module vairables for use in testing pooled connections later.
 
 ![broken](docs/broken.png)
 
-# Fix this
+# So how do we fix this?
 
 This needs to be fixed at the application level. We hook into each request
 before an after.
@@ -82,11 +96,11 @@ before an after.
     ....
 
     def connect(request):
-        config.DATABASE.connect()
+        DB.connect()
 
 
     def close(request, response):
-        config.DATABASE.close()
+        DB.close()
 
     ...
 
@@ -95,3 +109,10 @@ before an after.
     wsgi.global_events.on_post_response(close)
 
     wsgi.serve()
+
+# Fini
+
+Thats it, for a basic website that may be all you need to do. Check out the
+pooled connection repo for how to handle sites with more loads, and why the
+design here may have some flaws - although adminittedly simplicity is not one
+of them.
