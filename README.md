@@ -90,13 +90,15 @@ others. We can similute these events by stopping the connection from mysql.
 # So how do we fix this?
 
 This needs to be fixed at the application level. We hook into each request
-before an after.
+before an after. We need to add a minimal try/except as errors on the route
+may cause the connection to fail to close.
 
     #file: serve.py
     ....
 
     def connect(request):
-        DB.connect()
+        try: DB.connect()
+        except: print("unexpected error in connecting to database")
 
 
     def close(request, response):

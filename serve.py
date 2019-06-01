@@ -7,12 +7,13 @@ from config import DB
 from simplerr import dispatcher
 
 def connect(request):
-    DB.connect()
+    try: DB.connect()
+    except: print("unexpected error in connecting to database")
 
 def close(request, response):
     DB.close()
 
-def create(site='./website', hostname='127.0.0.1', port=3000):
+def create(site='./website', hostname='127.0.0.1', port=3100):
     wsgi = dispatcher.wsgi(site, hostname, port,)
     wsgi.global_events.on_pre_response(connect)
     wsgi.global_events.on_post_response(close)
